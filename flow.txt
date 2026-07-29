@@ -3,8 +3,6 @@ voting application
 a functionality where user can give bvote to the given set of candidates
 
 
-
-
 features -> 
    1.  User Sign in / sign up
    2. see the list of candidates
@@ -14,3 +12,33 @@ features ->
    6. admin
    7. users can change their password 
    8. user can login only with aadhar caed no. and password
+   9. admin can't vote
+
+--------------------------------------------------------
+
+   routes: -->
+   user Authentication:
+   /signup POST - create a user account,
+   /login : POST - log in to exixting account. (aadhar card + password )
+
+   
+   voting:
+   /candidates: GET
+   /vote:/candidateID: POST
+
+
+   vote counts:
+   Vote/counts/ : GET
+
+
+   user profile:
+   /profile : GET
+   /profile/password :PUT
+
+
+   admin candidate management
+   /candidate: POST
+   /candidate/candidateID: PUT
+   /candidate/candidateID: DELETE
+
+  
