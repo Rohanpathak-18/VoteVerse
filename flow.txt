@@ -1,0 +1,16 @@
+voting application
+
+a functionality where user can give bvote to the given set of candidates
+
+
+
+
+features -> 
+   1.  User Sign in / sign up
+   2. see the list of candidates
+   3. vote one of the candidate
+   4. there is a route which shos the list of candidates and their live vote counts sorted by their vote counts
+   5. aadhar no.
+   6. admin
+   7. users can change their password 
+   8. user can login only with aadhar caed no. and password
