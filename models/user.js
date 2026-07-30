@@ -1,83 +1,97 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt')
+const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-  },
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
 
-  age: {
-    type: Number,
-    required: true,
-  },
+    age: {
+      type: Number,
+      required: true,
+      min: 18,
+    },
 
-  mobile: {
-    type: String,
-  },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
 
-  email: {
-    type: String,
-  },
+    mobile: {
+      type: String,
+      required: true,
+      unique: true,
+    },
 
-  address: {
-    type: String,
-  },
+    aadharCardNumber: {
+      type: String,
+      required: true,
+      unique: true,
+      minlength: 12,
+      maxlength: 12,
+    },
 
-  aadharCardNumber: {
-    type:Number,
-    required:true,
-    unique:true
-  },
+    address: {
+      type: String,
+      required: true,
+    },
 
-  password: {
-    type: String,
-    required: true, 
-  },
- 
-  role:{
-  type:String,
-  enum:['voter', 'admin'],
-  default:'voter'
-  },
+    password: {
+      type: String,
+      required: true,
+      minlength: 6,
+    },
 
-  isVoted:{
-    type:Boolean,
-    default: false
+    role: {
+      type: String,
+      enum: ["voter", "admin"],
+      default: "voter",
+    },
+
+    isVoted: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  {
+    timestamps: true,
   }
-});
+);
 
 
+
+// Hash password before save
 userSchema.pre("save", async function (next) {
- const user = this;
+  try {
+    if (!this.isModified("password")) {
+      return next();
+    }
 
-if(!user.isModified("password")){
-    return next();
-}
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
 
- try{
-   const salt = await bcrypt.genSalt(20); //generate salt
-
-   const hashPassword = await bcrypt.hash(user.password, salt); 
-
-   user.password = hashPassword; 
-   next();
-
- }catch(err){
-   return next(err);
- }
+    next();
+  } catch (error) {
+    next(error);
+  }
 });
 
 
-userSchema.methods.comparePassword = async function(candidatePassword){
-  try {
-    const isMatch =  await bcrypt.compare(candidatePassword, this.password);
-    return isMatch;
-  } catch (err) {
-    return false;
-  }
+
+// Compare password
+userSchema.methods.comparePassword = async function (
+  candidatePassword
+) {
+  return await bcrypt.compare(
+    candidatePassword,
+    this.password
+  );
 };
 
-
-const User = mongoose.model('User', userSchema);
-module.exports =User;
+module.exports = mongoose.model("User", userSchema);

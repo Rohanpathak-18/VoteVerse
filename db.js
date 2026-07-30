@@ -1,15 +1,16 @@
-const mongoose = require('mongoose');
-const mongoURL =  process.env.MONGODB_URL_LOCAL || 'mongodb://127.0.0.1:27017/voting';
-mongoose.connect(mongoURL);
+const mongoose = require("mongoose");
+require("dotenv").config();
 
-const db = mongoose.connection;
+const mongoURL = process.env.MONGODB_URL_LOCAL;
 
-db.on('connected', () => {
-  console.log('MongoDB connected successfully');
-});
-db.on("error",(err)=>{
-    console.log(err);
-});
+mongoose
+  .connect(mongoURL)
+  .then(() => {
+    console.log("✅ MongoDB Connected Successfully");
+  })
+  .catch((err) => {
+    console.log("❌ MongoDB Connection Error");
+    console.log(err.message);
+  });
 
-module.exports = db;
-
+module.exports = mongoose;

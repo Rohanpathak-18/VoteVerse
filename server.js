@@ -1,18 +1,23 @@
 const express = require("express");
 const app = express();
-const db = require("./db");
-const dotenv = require("dotenv");
-dotenv.config();
+require("dotenv").config();
 
-const bodyParser = require("body-parser");
-app.use(bodyParser.json());
+require("./db");
 
+app.use(express.json());
 
 const userRoutes = require("./routes/userRoutes");
-app.use("/user" , userRoutes);
+
+
+app.use("/user", userRoutes);
 
 
 const PORT = process.env.PORT || 5000;
+
+app.get("/", (req, res) => {
+  res.send("🚀 VoteVerse API is Running...");
+});
+
 app.listen(PORT, () => {
-  console.log(`Server is running on port http://localhost:${PORT}`);
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
