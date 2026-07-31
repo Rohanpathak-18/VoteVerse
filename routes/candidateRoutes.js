@@ -62,10 +62,10 @@ router.put("/:candidateID", jwtAuthMiddleware, async (req, res) => {
 
 router.delete("/:candidateID", jwtAuthMiddleware, async (req, res) => {
   try {
-    if (!checkAdminRole(req.user.id))
+   if (!(await checkAdminRole(req.user.id)))
       return res.status(403).json({ mesage: "user does not admin role" });
 
-    const candidateID = req.user.candidateID;
+    const candidateID = req.params.candidateID;
 
     const response = await Candidate.findByIdAndDelete(candidateID);
 
@@ -82,16 +82,15 @@ router.delete("/:candidateID", jwtAuthMiddleware, async (req, res) => {
 });
 
 router.post("/vote/:candidateID", jwtAuthMiddleware, async (req, res) => {
-  candidateID = req.params.candidateID;
-  userId = req.user.id;
-
+  const candidateID = req.params.candidateID;
+  const userId = req.user.id;
   try {
-    const candidate = await candidate.findById(candidateID);
+const candidate = await Candidate.findById(candidateID);
     if (!candidate) {
       return res.status(404).json({ message: "candidate not found" });
     }
 
-    const user = await user.findById(candidateID);
+    const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: "user not found" });
     }
@@ -104,7 +103,7 @@ router.post("/vote/:candidateID", jwtAuthMiddleware, async (req, res) => {
       res.status(403).json({ message: "admin is not allowed to vote" });
     }
 
-    candidate.votes.push({ user: userID });
+    candidate.votes.push({ user: userId });
     candidate.voteCount++;
     await candidate.save();
 
@@ -113,26 +112,47 @@ router.post("/vote/:candidateID", jwtAuthMiddleware, async (req, res) => {
 
     res.status(200).json({ message: "vote recorded successfully" });
   } catch (error) {
-    console.log("Error updating data", err);
+    console.log("Error updating data", error);
     res.status(500).json({ error: "An error occurred while voting" });
+  }
+});
+
+ router.get('/candidate', async (req, res)=> {
+  try{
+   const userData = req.candidate;
+   const userId = candidateData.id;
+   const user = await Candidate.findById(candidateId);
+
+   if(!user){
+   return res.status(404).json({
+      error:"Candidate not found"
+   });
+}
+   res.status(200).json({candidate});
+
+  }catch (error){
+
+    console.log('Error fetching data:', error);
+    res.status(500).json({ error: 'An error occurred while fetching data' });
   }
 });
 
 router.get("/vote/count", async (req, res) => {
   try {
-    const candidate = await candidate.find().sort({ voteCount: "desc" });
+    const candidates = await Candidate.find().sort({ voteCount: -1 });
 
-    const voteRecord = candidate.map((data) => {
-      return {
-        party: data.party,
-        count: data.voteCount,
-      };
-    });
+    const voteRecord = candidates.map((data) => ({
+      party: data.party,
+      count: data.voteCount,
+    }));
 
     return res.status(200).json(voteRecord);
+
   } catch (error) {
-    console.log("Error updating data", err);
-    res.status(500).json({ error: "An error occurred while counting vote" });
+    console.log("Error counting votes:", error);
+    res.status(500).json({
+      error: "An error occurred while counting votes",
+    });
   }
 });
 

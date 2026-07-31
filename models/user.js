@@ -66,7 +66,7 @@ const userSchema = new mongoose.Schema(
 
 
 
-// Hash password before save
+
 userSchema.pre("save", async function (next) {
   try {
     if (!this.isModified("password")) {
@@ -83,8 +83,6 @@ userSchema.pre("save", async function (next) {
 });
 
 
-
-// Compare password
 userSchema.methods.comparePassword = async function (
   candidatePassword
 ) {
