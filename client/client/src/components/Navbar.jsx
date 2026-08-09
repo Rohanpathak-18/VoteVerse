@@ -1,30 +1,34 @@
-import { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
-import { Menu, X, Vote } from "lucide-react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Menu, X, LogOut, UserCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import { useState } from "react";
+import { useAuth } from "../store/AuthContext";
 
 function Navbar() {
   const [open, setOpen] = useState(false);
 
-  const navLinks = [
-    { name: "Home", path: "/" },
-    { name: "Results", path: "/results" },
-    { name: "Login", path: "/login" },
-    { name: "Signup", path: "/signup" },
-  ];
+  const navigate = useNavigate();
+
+  const { user, logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    setOpen(false);
+    navigate("/login");
+  };
 
   return (
     <motion.nav
       initial={{ y: -70, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      className="sticky top-0 z-50 border-b border-gray-200 bg-white/80 backdrop-blur-lg shadow-sm"
+      className="sticky top-0 z-50 border-b border-gray-200 bg-white/90 backdrop-blur-lg shadow-sm"
     >
-      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2">
-          <div className="rounded-xl bg-blue-600 p-2 text-white">
-            <Vote size={24} />
+        <Link to="/" className="flex items-center gap-3">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600 text-white">
+            ✓
           </div>
 
           <div>
@@ -38,77 +42,181 @@ function Navbar() {
           </div>
         </Link>
 
-        {/* Desktop Menu */}
+        {/* Navigation */}
         <div className="hidden items-center gap-8 md:flex">
-          {navLinks.map((link) => (
+
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              isActive
+                ? "font-medium text-blue-600"
+                : "font-medium text-gray-700 hover:text-blue-600"
+            }
+          >
+            Home
+          </NavLink>
+
+          <NavLink
+            to="/results"
+            className={({ isActive }) =>
+              isActive
+                ? "font-medium text-blue-600"
+                : "font-medium text-gray-700 hover:text-blue-600"
+            }
+          >
+            Results
+          </NavLink>
+
+          {user && (
             <NavLink
-              key={link.path}
-              to={link.path}
+              to="/dashboard"
               className={({ isActive }) =>
-                `font-medium transition ${
-                  isActive
-                    ? "text-blue-600"
-                    : "text-gray-700 hover:text-blue-600"
-                }`
+                isActive
+                  ? "font-medium text-blue-600"
+                  : "font-medium text-gray-700 hover:text-blue-600"
               }
             >
-              {link.name}
+              Dashboard
             </NavLink>
-          ))}
+          )}
+
+          {user?.role === "admin" && (
+            <NavLink
+              to="/admin"
+              className={({ isActive }) =>
+                isActive
+                  ? "font-medium text-red-600"
+                  : "font-medium text-red-500 hover:text-red-700"
+              }
+            >
+              Admin
+            </NavLink>
+          )}
+
         </div>
 
-        {/* Desktop Buttons */}
-        <div className="hidden gap-4 md:flex">
-          <button className="rounded-xl border border-blue-600 px-5 py-2 font-medium text-blue-600 transition hover:bg-blue-50">
-            Login
-          </button>
+        {/* Right side */}
+        <div className="hidden items-center gap-4 md:flex">
 
-          <button className="rounded-xl bg-blue-600 px-5 py-2 font-medium text-white transition hover:bg-blue-700">
-            Sign Up
-          </button>
+          {!user ? (
+            <>
+              <Link
+                to="/login"
+                className="rounded-xl border border-blue-600 px-5 py-2 font-medium text-blue-600 hover:bg-blue-50"
+              >
+                Login
+              </Link>
+
+              <Link
+                to="/signup"
+                className="rounded-xl bg-blue-600 px-5 py-2 font-medium text-white hover:bg-blue-700"
+              >
+                Sign Up
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link
+                to="/dashboard"
+                className="flex items-center gap-2 rounded-xl border px-4 py-2"
+              >
+                <UserCircle size={20} />
+
+                <span>
+                  {user.name}
+                </span>
+              </Link>
+
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-2 rounded-xl bg-red-500 px-4 py-2 text-white hover:bg-red-600"
+              >
+                <LogOut size={18} />
+                Logout
+              </button>
+            </>
+          )}
+
         </div>
 
-        {/* Mobile Button */}
+        {/* Mobile */}
         <button
           onClick={() => setOpen(!open)}
           className="md:hidden"
         >
           {open ? <X size={28} /> : <Menu size={28} />}
         </button>
+
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile menu */}
       {open && (
-        <motion.div
-          initial={{ opacity: 0, y: -25 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="space-y-4 border-t bg-white px-6 py-6 md:hidden"
-        >
-          {navLinks.map((link) => (
-            <NavLink
-              key={link.path}
-              to={link.path}
+        <div className="space-y-4 border-t bg-white px-6 py-6 md:hidden">
+
+          <Link
+            to="/"
+            onClick={() => setOpen(false)}
+            className="block"
+          >
+            Home
+          </Link>
+
+          <Link
+            to="/results"
+            onClick={() => setOpen(false)}
+            className="block"
+          >
+            Results
+          </Link>
+
+          {user && (
+            <Link
+              to="/dashboard"
               onClick={() => setOpen(false)}
-              className={({ isActive }) =>
-                `block font-medium ${
-                  isActive
-                    ? "text-blue-600"
-                    : "text-gray-700"
-                }`
-              }
+              className="block"
             >
-              {link.name}
-            </NavLink>
-          ))}
+              Dashboard
+            </Link>
+          )}
 
-          <button className="w-full rounded-xl border border-blue-600 py-2 text-blue-600">
-            Login
-          </button>
+          {user?.role === "admin" && (
+            <Link
+              to="/admin"
+              onClick={() => setOpen(false)}
+              className="block font-semibold text-red-600"
+            >
+              Admin Dashboard
+            </Link>
+          )}
 
-          <button className="w-full rounded-xl bg-blue-600 py-2 text-white">
-            Sign Up
-          </button>
-        </motion.div>
+          {!user ? (
+            <>
+              <Link
+                to="/login"
+                onClick={() => setOpen(false)}
+                className="block"
+              >
+                Login
+              </Link>
+
+              <Link
+                to="/signup"
+                onClick={() => setOpen(false)}
+                className="block"
+              >
+                Sign Up
+              </Link>
+            </>
+          ) : (
+            <button
+              onClick={handleLogout}
+              className="w-full rounded-xl bg-red-500 py-2 text-white"
+            >
+              Logout
+            </button>
+          )}
+
+        </div>
       )}
     </motion.nav>
   );

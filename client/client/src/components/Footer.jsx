@@ -1,63 +1,85 @@
-import {
-  Github,
-  Linkedin,
-  Mail,
-  Heart,
-} from "lucide-react";
-
 function Footer() {
   return (
-    <footer className="bg-slate-900 text-white">
-      <div className="mx-auto max-w-7xl px-6 py-14">
+    <footer className="bg-slate-900 p-10 text-white">
+      <div className="mx-auto max-w-7xl">
 
         <div className="grid gap-10 md:grid-cols-3">
 
+          {/* Logo */}
           <div>
-            <h2 className="text-3xl font-bold text-blue-400">
+            <h1 className="text-3xl font-bold text-blue-400">
               VoteVerse
-            </h2>
+            </h1>
 
-            <p className="mt-4 text-slate-300">
+            <p className="mt-4 leading-7 text-slate-300">
               Secure, transparent and modern online voting platform.
             </p>
           </div>
 
+          {/* Quick Links */}
           <div>
-            <h3 className="mb-5 text-xl font-semibold">
+            <h2 className="mb-4 text-xl font-semibold">
               Quick Links
-            </h3>
+            </h2>
 
-            <ul className="space-y-3">
-              <li><a href="/">Home</a></li>
-              <li><a href="/results">Results</a></li>
-              <li><a href="/login">Login</a></li>
-              <li><a href="/signup">Signup</a></li>
+            <ul className="space-y-3 text-slate-300">
+              <li>
+                <a href="/" className="transition hover:text-blue-400">
+                  Home
+                </a>
+              </li>
+
+              <li>
+                <a href="/results" className="transition hover:text-blue-400">
+                  Results
+                </a>
+              </li>
+
+              <li>
+                <a href="/login" className="transition hover:text-blue-400">
+                  Login
+                </a>
+              </li>
+
+              <li>
+                <a href="/signup" className="transition hover:text-blue-400">
+                  Signup
+                </a>
+              </li>
             </ul>
           </div>
 
+          {/* Contact */}
           <div>
-            <h3 className="mb-5 text-xl font-semibold">
+            <h2 className="mb-4 text-xl font-semibold">
               Contact
-            </h3>
+            </h2>
 
-            <div className="flex items-center gap-2">
-              <Mail size={18} />
+            <p className="text-slate-300">
+              Email
+            </p>
+
+            <p className="mt-2 text-slate-300">
               support@voteverse.com
-            </div>
+            </p>
 
-            <div className="mt-4 flex gap-3">
-              <Github />
-              <Linkedin />
+            <div className="mt-5 flex gap-3">
+              <button className="rounded-full bg-slate-800 px-4 py-2 transition hover:bg-blue-600">
+                GitHub
+              </button>
+
+              <button className="rounded-full bg-slate-800 px-4 py-2 transition hover:bg-blue-600">
+                LinkedIn
+              </button>
             </div>
           </div>
 
         </div>
 
-        <div className="mt-10 border-t border-slate-700 pt-5 text-center">
-          <p className="flex items-center justify-center gap-2">
-            Made with
-            <Heart size={18} className="text-red-500" />
-            by VoteVerse Team © {new Date().getFullYear()}
+        {/* Copyright */}
+        <div className="mt-10 border-t border-slate-700 pt-6 text-center">
+          <p className="text-slate-400">
+            © {new Date().getFullYear()} VoteVerse. All Rights Reserved.
           </p>
         </div>
 
