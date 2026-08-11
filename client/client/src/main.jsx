@@ -5,12 +5,16 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import "./index.css";
 
+import Navbar from "./components/Navbar";
 import { AuthProvider } from "./store/AuthContext";
 
-createRoot(document.getElementById("root")).render(
+createRoot(
+  document.getElementById("root")
+).render(
   <StrictMode>
     <BrowserRouter>
       <AuthProvider>
+        <Navbar />
         <App />
       </AuthProvider>
     </BrowserRouter>

@@ -1,5 +1,9 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+} from "react-router-dom";
+
 import { motion } from "framer-motion";
 
 import axiosInstance from "../api/axiosInstance";
@@ -7,78 +11,119 @@ import { useAuth } from "../store/AuthContext";
 
 function Signup() {
   const navigate = useNavigate();
+
   const { setUser } = useAuth();
 
-  const [formData, setFormData] = useState({
-    name: "",
-    age: "",
-    email: "",
-    mobile: "",
-    aadharCardNumber: "",
-    address: "",
-    password: "",
-    role: "voter",
-  });
+  const [formData, setFormData] =
+    useState({
+      name: "",
+      age: "",
+      email: "",
+      mobile: "",
+      aadharCardNumber: "",
+      address: "",
+      password: "",
+      role: "voter",
+      party: "",
+    });
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] =
+    useState(false);
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [e.target.name]:
+        e.target.value,
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validation
-    if (formData.aadharCardNumber.length !== 12) {
-      alert("Aadhar number must contain exactly 12 digits.");
+    if (
+      formData.aadharCardNumber.length !==
+      12
+    ) {
+      alert(
+        "Aadhar number must contain exactly 12 digits."
+      );
       return;
     }
 
     if (Number(formData.age) < 18) {
-      alert("You must be at least 18 years old.");
+      alert(
+        "You must be at least 18 years old."
+      );
+      return;
+    }
+
+    if (
+      formData.role === "candidate" &&
+      !formData.party.trim()
+    ) {
+      alert(
+        "Party name is required for candidates."
+      );
       return;
     }
 
     setLoading(true);
 
     try {
-      // Signup API call
-      const response = await axiosInstance.post("/user/signup", {
-        ...formData,
-        age: Number(formData.age),
-      });
+      const response =
+        await axiosInstance.post(
+          "/user/signup",
+          {
+            ...formData,
+            age: Number(formData.age),
+          }
+        );
 
-      // Get token and user from backend
-      const { token, user } = response.data;
+      const {
+        token,
+        user,
+      } = response.data;
 
-      // Save authentication data
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem(
+        "token",
+        token
+      );
 
-      // Update AuthContext
+      localStorage.setItem(
+        "user",
+        JSON.stringify(user)
+      );
+
       setUser(user);
 
-      alert("Account created successfully!");
+      alert(
+        "Account created successfully!"
+      );
 
-      // Role-based navigation
+      // ROLE BASED REDIRECTION
       if (user.role === "candidate") {
-        navigate("/candidate-dashboard");
+        navigate(
+          "/candidate-dashboard"
+        );
       } else if (user.role === "admin") {
-        navigate("/admin-dashboard");
+        navigate(
+          "/admin-dashboard"
+        );
       } else {
         navigate("/dashboard");
       }
+
     } catch (error) {
-      console.error("Signup error:", error);
+      console.error(
+        "Signup error:",
+        error
+      );
 
       alert(
         error.response?.data?.message ||
-          error.response?.data?.error ||
-          "Signup failed"
+        error.response?.data?.error ||
+        "Signup failed"
       );
     } finally {
       setLoading(false);
@@ -87,6 +132,7 @@ function Signup() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex justify-center px-4 py-12">
+
       <motion.div
         initial={{
           opacity: 0,
@@ -98,7 +144,9 @@ function Signup() {
         }}
         className="w-full max-w-2xl"
       >
+
         <div className="mb-8 text-center">
+
           <h1 className="text-4xl font-bold text-blue-600">
             VoteVerse
           </h1>
@@ -106,9 +154,11 @@ function Signup() {
           <p className="mt-2 text-gray-500">
             Create your voting account
           </p>
+
         </div>
 
         <div className="rounded-3xl bg-white p-8 shadow-xl">
+
           <h2 className="text-2xl font-bold">
             Create Account
           </h2>
@@ -121,7 +171,8 @@ function Signup() {
             onSubmit={handleSubmit}
             className="mt-8 grid gap-5 md:grid-cols-2"
           >
-            {/* Name */}
+
+            {/* NAME */}
             <div>
               <label className="mb-2 block font-medium">
                 Full Name
@@ -137,7 +188,7 @@ function Signup() {
               />
             </div>
 
-            {/* Age */}
+            {/* AGE */}
             <div>
               <label className="mb-2 block font-medium">
                 Age
@@ -155,7 +206,7 @@ function Signup() {
               />
             </div>
 
-            {/* Email */}
+            {/* EMAIL */}
             <div>
               <label className="mb-2 block font-medium">
                 Email
@@ -172,7 +223,7 @@ function Signup() {
               />
             </div>
 
-            {/* Mobile */}
+            {/* MOBILE */}
             <div>
               <label className="mb-2 block font-medium">
                 Mobile Number
@@ -188,7 +239,7 @@ function Signup() {
               />
             </div>
 
-            {/* Aadhar */}
+            {/* AADHAR */}
             <div>
               <label className="mb-2 block font-medium">
                 Aadhar Card Number
@@ -196,7 +247,9 @@ function Signup() {
 
               <input
                 name="aadharCardNumber"
-                value={formData.aadharCardNumber}
+                value={
+                  formData.aadharCardNumber
+                }
                 onChange={handleChange}
                 maxLength={12}
                 minLength={12}
@@ -207,7 +260,7 @@ function Signup() {
               />
             </div>
 
-            {/* Role */}
+            {/* ROLE */}
             <div>
               <label className="mb-2 block font-medium">
                 Register As
@@ -229,8 +282,30 @@ function Signup() {
               </select>
             </div>
 
-            {/* Address */}
+            {/* PARTY */}
+            {formData.role ===
+              "candidate" && (
+              <div className="md:col-span-2">
+
+                <label className="mb-2 block font-medium">
+                  Party Name
+                </label>
+
+                <input
+                  name="party"
+                  value={formData.party}
+                  onChange={handleChange}
+                  required
+                  className="w-full rounded-xl border px-4 py-3"
+                  placeholder="Enter your party name"
+                />
+
+              </div>
+            )}
+
+            {/* ADDRESS */}
             <div className="md:col-span-2">
+
               <label className="mb-2 block font-medium">
                 Address
               </label>
@@ -244,10 +319,12 @@ function Signup() {
                 className="w-full rounded-xl border px-4 py-3"
                 placeholder="Your address"
               />
+
             </div>
 
-            {/* Password */}
+            {/* PASSWORD */}
             <div className="md:col-span-2">
+
               <label className="mb-2 block font-medium">
                 Password
               </label>
@@ -262,10 +339,12 @@ function Signup() {
                 className="w-full rounded-xl border px-4 py-3"
                 placeholder="Create password"
               />
+
             </div>
 
-            {/* Submit */}
+            {/* BUTTON */}
             <div className="md:col-span-2">
+
               <button
                 type="submit"
                 disabled={loading}
@@ -275,7 +354,9 @@ function Signup() {
                   ? "Creating Account..."
                   : "Create Account"}
               </button>
+
             </div>
+
           </form>
 
           <p className="mt-6 text-center text-gray-500">
@@ -288,6 +369,7 @@ function Signup() {
               Login
             </Link>
           </p>
+
         </div>
       </motion.div>
     </div>

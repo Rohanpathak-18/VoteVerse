@@ -1,22 +1,36 @@
 import { Navigate } from "react-router-dom";
+import { useAuth } from "../store/AuthContext";
 
 function AdminRoute({ children }) {
-  const token = localStorage.getItem("token");
+  const {
+    user,
+    loading,
+  } = useAuth();
 
-  let user = null;
-
-  try {
-    user = JSON.parse(localStorage.getItem("user"));
-  } catch {
-    user = null;
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        Loading...
+      </div>
+    );
   }
 
-  if (!token || !user) {
-    return <Navigate to="/login" replace />;
+  if (!user) {
+    return (
+      <Navigate
+        to="/login"
+        replace
+      />
+    );
   }
 
   if (user.role !== "admin") {
-    return <Navigate to="/dashboard" replace />;
+    return (
+      <Navigate
+        to="/dashboard"
+        replace
+      />
+    );
   }
 
   return children;

@@ -1,11 +1,13 @@
 const express = require("express");
 const cors = require("cors");
-require("dotenv").config();
+const dotenv = require("dotenv");
 
 const connectDB = require("./db");
 
 const userRoutes = require("./routes/userRoutes");
 const candidateRoutes = require("./routes/candidateRoutes");
+
+dotenv.config();
 
 const app = express();
 
@@ -18,27 +20,19 @@ app.use(
 
 app.use(express.json());
 
-app.use("/user", userRoutes);
-app.use("/candidate", candidateRoutes);
+connectDB();
 
+// Routes
+app.use("/api/user", userRoutes);
+app.use("/api/candidate", candidateRoutes);
+
+// Test
 app.get("/", (req, res) => {
-  res.json({
-    message: "🚀 VoteVerse API is Running",
-  });
+  res.send("VoteVerse API is running");
 });
 
 const PORT = process.env.PORT || 5000;
 
-const startServer = async () => {
-  try {
-    await connectDB();
-
-    app.listen(PORT, () => {
-      console.log(`🚀 Server running on http://localhost:${PORT}`);
-    });
-  } catch (error) {
-    console.error("❌ Failed to start server:", error.message);
-  }
-};
-
-startServer();
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

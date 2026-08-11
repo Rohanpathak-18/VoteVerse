@@ -1,81 +1,36 @@
 import axiosInstance from "../api/axiosInstance";
 
-
-// ============================================
-// GET ALL CANDIDATES
-// ============================================
-
 export const getCandidates = async () => {
-
-    const response =
-        await axiosInstance.get(
-            "/candidate"
-        );
-
-    return response.data;
+  const response = await axiosInstance.get("/candidate");
+  return response.data;
 };
 
+export const getMyCandidateProfile = async () => {
+  const response = await axiosInstance.get("/candidate/my-profile");
+  return response.data;
+};
 
-// ============================================
-// GET MY CANDIDATE PROFILE
-// ============================================
+export const registerAsCandidate = async (candidateData) => {
+  const response = await axiosInstance.post(
+    "/candidate/register",
+    candidateData
+  );
 
-export const getMyCandidateProfile =
-    async () => {
+  return response.data;
+};
 
-        const response =
-            await axiosInstance.get(
-                "/candidate/my-profile"
-            );
+export const voteCandidate = async (id) => {
+  const response = await axiosInstance.post(
+    `/candidate/${id}/vote`
+  );
 
-        return response.data;
-    };
+  return response.data;
+};
 
+export const getVoteCount = async () => {
+  const response = await axiosInstance.get(
+    "/candidate/vote/count"
+  );
 
-// ============================================
-// REGISTER AS CANDIDATE
-// ============================================
-
-export const registerAsCandidate =
-    async (candidateData) => {
-
-        const response =
-            await axiosInstance.post(
-                "/candidate/register",
-                candidateData
-            );
-
-        return response.data;
-    };
-
-
-// ============================================
-// VOTE
-// ============================================
-
-export const voteCandidate =
-    async (candidateId) => {
-
-        const response =
-            await axiosInstance.post(
-                `/candidate/${candidateId}/vote`
-            );
-
-        return response.data;
-    };
-
-
-// ============================================
-// GET VOTE COUNT / RESULTS
-// ============================================
-
-export const getVoteCount =
-    async () => {
-
-        const response =
-            await axiosInstance.get(
-                "/candidate/vote/count"
-            );
-
-        return response.data;
-    };
+  return response.data;
+};

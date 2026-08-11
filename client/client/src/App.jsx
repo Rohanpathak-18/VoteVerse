@@ -18,16 +18,27 @@ function App() {
     <Routes>
 
       {/* PUBLIC */}
-      <Route path="/" element={<Home />} />
+      <Route
+        path="/"
+        element={<Home />}
+      />
 
-      <Route path="/login" element={<Login />} />
+      <Route
+        path="/login"
+        element={<Login />}
+      />
 
-      <Route path="/signup" element={<Signup />} />
+      <Route
+        path="/signup"
+        element={<Signup />}
+      />
 
-      <Route path="/results" element={<Results />} />
+      <Route
+        path="/results"
+        element={<Results />}
+      />
 
-
-      {/* USER DASHBOARD */}
+      {/* VOTER DASHBOARD */}
       <Route
         path="/dashboard"
         element={
@@ -36,7 +47,6 @@ function App() {
           </ProtectedRoute>
         }
       />
-
 
       {/* VOTING */}
       <Route
@@ -48,7 +58,6 @@ function App() {
         }
       />
 
-
       {/* CANDIDATE DASHBOARD */}
       <Route
         path="/candidate-dashboard"
@@ -59,8 +68,7 @@ function App() {
         }
       />
 
-
-      {/* CANDIDATE REGISTRATION */}
+      {/* VOTER → CANDIDATE REGISTRATION */}
       <Route
         path="/candidate/register"
         element={
@@ -70,10 +78,9 @@ function App() {
         }
       />
 
-
-      {/* ADMIN */}
+      {/* ADMIN DASHBOARD */}
       <Route
-        path="/admin"
+        path="/admin-dashboard"
         element={
           <AdminRoute>
             <AdminDashboard />
