@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+
+import axiosInstance from "../api/axiosInstance";
 import { useAuth } from "../store/AuthContext";
 
 function Login() {
   const navigate = useNavigate();
-
-  const { login } = useAuth();
+  const { setUser } = useAuth();
 
   const [formData, setFormData] = useState({
     aadharCardNumber: "",
@@ -24,116 +26,157 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (formData.aadharCardNumber.length !== 12) {
+      alert("Aadhar number must contain exactly 12 digits.");
+      return;
+    }
+
+    setLoading(true);
+
     try {
-      setLoading(true);
+      const response = await axiosInstance.post(
+        "/user/login",
+        formData
+      );
 
-      const response = await login(formData);
+      const { token, user } = response.data;
 
-      console.log("Login response:", response);
+      // Save token
+      localStorage.setItem("token", token);
 
-      const role =
-        response.user?.role ||
-        response.role;
+      // Save user
+      localStorage.setItem(
+        "user",
+        JSON.stringify(user)
+      );
 
-      if (role === "admin") {
-        navigate("/admin");
+      // Update AuthContext
+      setUser(user);
+
+      alert("Login successful!");
+
+      // Role-based navigation
+      if (user.role === "candidate") {
+        navigate("/candidate-dashboard");
+      } else if (user.role === "admin") {
+        navigate("/admin-dashboard");
       } else {
         navigate("/dashboard");
       }
-
     } catch (error) {
       console.error("Login error:", error);
 
       alert(
-        error.response?.data?.message ||
-        error.message ||
-        "Login failed"
+        error.response?.data?.error ||
+          error.response?.data?.message ||
+          "Login failed. Please check your credentials."
       );
-
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center px-4">
 
-      <div className="w-full max-w-md rounded-3xl bg-white p-8 shadow-xl">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="w-full max-w-md"
+      >
 
-        <h1 className="text-3xl font-bold text-blue-600">
-          VoteVerse
-        </h1>
+        {/* Logo */}
+        <div className="mb-8 text-center">
+          <h1 className="text-4xl font-bold text-blue-600">
+            VoteVerse
+          </h1>
 
-        <h2 className="mt-6 text-2xl font-bold">
-          Welcome Back
-        </h2>
+          <p className="mt-2 text-gray-500">
+            Login to your voting account
+          </p>
+        </div>
 
-        <p className="mt-2 text-gray-500">
-          Login to access your voting account.
-        </p>
+        {/* Login Card */}
+        <div className="rounded-3xl bg-white p-8 shadow-xl border border-gray-100">
 
-        <form
-          onSubmit={handleSubmit}
-          className="mt-8 space-y-5"
-        >
+          <h2 className="text-2xl font-bold text-gray-900">
+            Welcome Back
+          </h2>
 
-          <div>
-            <label className="mb-2 block font-medium">
-              Aadhar Card Number
-            </label>
+          <p className="mt-2 text-gray-500">
+            Login to continue to VoteVerse.
+          </p>
 
-            <input
-              type="text"
-              name="aadharCardNumber"
-              value={formData.aadharCardNumber}
-              onChange={handleChange}
-              placeholder="Enter your Aadhar number"
-              required
-              className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-blue-500"
-            />
-          </div>
-
-
-          <div>
-            <label className="mb-2 block font-medium">
-              Password
-            </label>
-
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="Enter your password"
-              required
-              className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-blue-500"
-            />
-          </div>
-
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-xl bg-blue-600 py-3 font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
+          <form
+            onSubmit={handleSubmit}
+            className="mt-8 space-y-5"
           >
-            {loading ? "Logging in..." : "Login"}
-          </button>
 
-        </form>
+            {/* Aadhar */}
+            <div>
+              <label className="mb-2 block font-medium text-gray-700">
+                Aadhar Card Number
+              </label>
 
+              <input
+                type="text"
+                name="aadharCardNumber"
+                value={formData.aadharCardNumber}
+                onChange={handleChange}
+                maxLength={12}
+                minLength={12}
+                pattern="[0-9]{12}"
+                required
+                placeholder="Enter 12 digit Aadhar number"
+                className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              />
+            </div>
 
-        <p className="mt-6 text-center text-gray-500">
-          Don't have an account?{" "}
-          <Link
-            to="/signup"
-            className="font-semibold text-blue-600"
-          >
-            Create Account
-          </Link>
-        </p>
+            {/* Password */}
+            <div>
+              <label className="mb-2 block font-medium text-gray-700">
+                Password
+              </label>
 
-      </div>
+              <input
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                placeholder="Enter your password"
+                className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              />
+            </div>
 
+            {/* Login Button */}
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              type="submit"
+              disabled={loading}
+              className="w-full rounded-xl bg-blue-600 py-3 font-semibold text-white shadow-lg transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {loading ? "Logging in..." : "Login"}
+            </motion.button>
+
+          </form>
+
+          {/* Signup */}
+          <p className="mt-6 text-center text-gray-500">
+            Don't have an account?{" "}
+
+            <Link
+              to="/signup"
+              className="font-semibold text-blue-600 hover:text-blue-700"
+            >
+              Create Account
+            </Link>
+          </p>
+
+        </div>
+      </motion.div>
     </div>
   );
 }

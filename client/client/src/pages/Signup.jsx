@@ -3,12 +3,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
 import axiosInstance from "../api/axiosInstance";
-
+import { useAuth } from "../store/AuthContext";
 
 function Signup() {
-
   const navigate = useNavigate();
-
+  const { setUser } = useAuth();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -21,83 +20,73 @@ function Signup() {
     role: "voter",
   });
 
-
-  const [loading, setLoading] =
-    useState(false);
-
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
-
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
   };
 
-
   const handleSubmit = async (e) => {
-
     e.preventDefault();
+
+    // Validation
+    if (formData.aadharCardNumber.length !== 12) {
+      alert("Aadhar number must contain exactly 12 digits.");
+      return;
+    }
+
+    if (Number(formData.age) < 18) {
+      alert("You must be at least 18 years old.");
+      return;
+    }
 
     setLoading(true);
 
-
     try {
+      // Signup API call
+      const response = await axiosInstance.post("/user/signup", {
+        ...formData,
+        age: Number(formData.age),
+      });
 
-      const response =
-        await axiosInstance.post(
-          "/user/signup",
-          {
-            ...formData,
-            age: Number(formData.age),
-          }
-        );
+      // Get token and user from backend
+      const { token, user } = response.data;
 
+      // Save authentication data
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
 
-      localStorage.setItem(
-        "token",
-        response.data.token
-      );
+      // Update AuthContext
+      setUser(user);
 
+      alert("Account created successfully!");
 
-      alert(
-        "Account created successfully!"
-      );
-
-
-      if (response.data.user.role === "candidate") {
-
+      // Role-based navigation
+      if (user.role === "candidate") {
         navigate("/candidate-dashboard");
-
+      } else if (user.role === "admin") {
+        navigate("/admin-dashboard");
       } else {
-
         navigate("/dashboard");
-
       }
-
     } catch (error) {
-
-      console.error(
-        "Signup error:",
-        error
-      );
+      console.error("Signup error:", error);
 
       alert(
         error.response?.data?.message ||
-        "Signup failed"
+          error.response?.data?.error ||
+          "Signup failed"
       );
-
     } finally {
-
       setLoading(false);
     }
   };
 
-
   return (
-
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex justify-center px-4 py-12">
-
       <motion.div
         initial={{
           opacity: 0,
@@ -109,9 +98,7 @@ function Signup() {
         }}
         className="w-full max-w-2xl"
       >
-
         <div className="mb-8 text-center">
-
           <h1 className="text-4xl font-bold text-blue-600">
             VoteVerse
           </h1>
@@ -119,12 +106,9 @@ function Signup() {
           <p className="mt-2 text-gray-500">
             Create your voting account
           </p>
-
         </div>
 
-
         <div className="rounded-3xl bg-white p-8 shadow-xl">
-
           <h2 className="text-2xl font-bold">
             Create Account
           </h2>
@@ -133,14 +117,11 @@ function Signup() {
             Register as a voter or candidate.
           </p>
 
-
           <form
             onSubmit={handleSubmit}
             className="mt-8 grid gap-5 md:grid-cols-2"
           >
-
             {/* Name */}
-
             <div>
               <label className="mb-2 block font-medium">
                 Full Name
@@ -156,9 +137,7 @@ function Signup() {
               />
             </div>
 
-
             {/* Age */}
-
             <div>
               <label className="mb-2 block font-medium">
                 Age
@@ -176,9 +155,7 @@ function Signup() {
               />
             </div>
 
-
             {/* Email */}
-
             <div>
               <label className="mb-2 block font-medium">
                 Email
@@ -195,9 +172,7 @@ function Signup() {
               />
             </div>
 
-
             {/* Mobile */}
-
             <div>
               <label className="mb-2 block font-medium">
                 Mobile Number
@@ -213,9 +188,7 @@ function Signup() {
               />
             </div>
 
-
             {/* Aadhar */}
-
             <div>
               <label className="mb-2 block font-medium">
                 Aadhar Card Number
@@ -226,15 +199,15 @@ function Signup() {
                 value={formData.aadharCardNumber}
                 onChange={handleChange}
                 maxLength={12}
+                minLength={12}
+                pattern="[0-9]{12}"
                 required
                 className="w-full rounded-xl border px-4 py-3"
                 placeholder="12 digit Aadhar number"
               />
             </div>
 
-
             {/* Role */}
-
             <div>
               <label className="mb-2 block font-medium">
                 Register As
@@ -246,7 +219,6 @@ function Signup() {
                 onChange={handleChange}
                 className="w-full rounded-xl border px-4 py-3"
               >
-
                 <option value="voter">
                   Voter
                 </option>
@@ -254,16 +226,11 @@ function Signup() {
                 <option value="candidate">
                   Candidate
                 </option>
-
               </select>
-
             </div>
 
-
             {/* Address */}
-
             <div className="md:col-span-2">
-
               <label className="mb-2 block font-medium">
                 Address
               </label>
@@ -277,14 +244,10 @@ function Signup() {
                 className="w-full rounded-xl border px-4 py-3"
                 placeholder="Your address"
               />
-
             </div>
 
-
             {/* Password */}
-
             <div className="md:col-span-2">
-
               <label className="mb-2 block font-medium">
                 Password
               </label>
@@ -299,31 +262,23 @@ function Signup() {
                 className="w-full rounded-xl border px-4 py-3"
                 placeholder="Create password"
               />
-
             </div>
 
-
+            {/* Submit */}
             <div className="md:col-span-2">
-
               <button
                 type="submit"
                 disabled={loading}
                 className="w-full rounded-xl bg-blue-600 py-3 font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
               >
-
                 {loading
                   ? "Creating Account..."
                   : "Create Account"}
-
               </button>
-
             </div>
-
           </form>
 
-
           <p className="mt-6 text-center text-gray-500">
-
             Already have an account?{" "}
 
             <Link
@@ -332,16 +287,11 @@ function Signup() {
             >
               Login
             </Link>
-
           </p>
-
         </div>
-
       </motion.div>
-
     </div>
   );
 }
-
 
 export default Signup;

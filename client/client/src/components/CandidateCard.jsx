@@ -1,38 +1,40 @@
-import { motion } from "framer-motion";
-import { User, BadgeCheck } from "lucide-react";
-
 function CandidateCard({ candidate }) {
-  return (
-    <motion.div
-      whileHover={{ y: -8, scale: 1.03 }}
-      transition={{ duration: 0.3 }}
-      className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-lg"
-    >
-      {/* Candidate Image */}
-      <div className="flex h-60 items-center justify-center bg-gradient-to-br from-blue-100 to-indigo-200">
-        <User size={80} className="text-blue-600" />
-      </div>
 
-      {/* Candidate Details */}
-      <div className="p-6">
-        <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold text-gray-900">
-            {candidate.name}
-          </h2>
+    return (
 
-          <BadgeCheck className="text-blue-600" size={24} />
+        <div className="rounded-2xl bg-white p-6 shadow-md">
+
+            <div className="flex h-32 items-center justify-center rounded-xl bg-blue-100">
+
+                <span className="text-5xl">
+                    👤
+                </span>
+
+            </div>
+
+
+            <h3 className="mt-5 text-2xl font-bold">
+                {candidate.name}
+            </h3>
+
+
+            <p className="mt-2 text-gray-500">
+                Party: {candidate.party}
+            </p>
+
+
+            <p className="mt-1 text-gray-500">
+                Age: {candidate.age}
+            </p>
+
+
+            <p className="mt-3 text-sm text-gray-400">
+                Votes: {candidate.voteCount || 0}
+            </p>
+
         </div>
-
-        <p className="mt-2 text-gray-500">
-          {candidate.party}
-        </p>
-
-        <button className="mt-6 w-full rounded-xl bg-blue-600 py-3 font-semibold text-white transition hover:bg-blue-700">
-          Vote Now
-        </button>
-      </div>
-    </motion.div>
-  );
+    );
 }
+
 
 export default CandidateCard;

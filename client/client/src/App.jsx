@@ -1,48 +1,87 @@
 import { Routes, Route } from "react-router-dom";
 
-import Navbar from "./components/Navbar";
-
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import Results from "./pages/Results";
 import Dashboard from "./pages/Dashboard";
 import AdminDashboard from "./pages/AdminDashboard";
+import CandidateDashboard from "./pages/CandidateDashboard";
+import CandidateRegister from "./pages/CandidateRegister";
+import Results from "./pages/Results";
+import Vote from "./pages/Vote";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
 
 function App() {
   return (
-    <>
-      <Navbar />
+    <Routes>
 
-      <Routes>
+      {/* PUBLIC */}
+      <Route path="/" element={<Home />} />
 
-        {/* Public */}
-        <Route path="/" element={<Home />} />
-        <Route path="/results" element={<Results />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
+      <Route path="/login" element={<Login />} />
 
-        {/* User / Voter Dashboard */}
-        <Route element={<ProtectedRoute />}>
-          <Route
-            path="/dashboard"
-            element={<Dashboard />}
-          />
-        </Route>
+      <Route path="/signup" element={<Signup />} />
 
-        {/* Admin Dashboard */}
-        <Route element={<AdminRoute />}>
-          <Route
-            path="/admin"
-            element={<AdminDashboard />}
-          />
-        </Route>
+      <Route path="/results" element={<Results />} />
 
-      </Routes>
-    </>
+
+      {/* USER DASHBOARD */}
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        }
+      />
+
+
+      {/* VOTING */}
+      <Route
+        path="/vote"
+        element={
+          <ProtectedRoute>
+            <Vote />
+          </ProtectedRoute>
+        }
+      />
+
+
+      {/* CANDIDATE DASHBOARD */}
+      <Route
+        path="/candidate-dashboard"
+        element={
+          <ProtectedRoute>
+            <CandidateDashboard />
+          </ProtectedRoute>
+        }
+      />
+
+
+      {/* CANDIDATE REGISTRATION */}
+      <Route
+        path="/candidate/register"
+        element={
+          <ProtectedRoute>
+            <CandidateRegister />
+          </ProtectedRoute>
+        }
+      />
+
+
+      {/* ADMIN */}
+      <Route
+        path="/admin"
+        element={
+          <AdminRoute>
+            <AdminDashboard />
+          </AdminRoute>
+        }
+      />
+
+    </Routes>
   );
 }
 

@@ -111,67 +111,42 @@ router.post("/signup", async (req, res) => {
 // ===============================
 router.post("/login", async (req, res) => {
   try {
-
-    const {
-      aadharCardNumber,
-      password,
-    } = req.body;
-
-
-    if (!aadharCardNumber || !password) {
-      return res.status(400).json({
-        message: "Aadhar number and password are required",
-      });
-    }
-
+    const { aadharCardNumber, password } = req.body;
 
     const user = await User.findOne({
       aadharCardNumber,
     });
 
-
-    if (!user) {
-      return res.status(401).json({
-        message: "Invalid Aadhar number or password",
+    if (!user || !(await user.comparePassword(password))) {
+      return res.status(400).json({
+        error: "Invalid Aadhar number or password",
       });
     }
 
-
-    const passwordMatch =
-      await user.comparePassword(password);
-
-
-    if (!passwordMatch) {
-      return res.status(401).json({
-        message: "Invalid Aadhar number or password",
-      });
-    }
-
-
-    const token = generateToken({
+    const payload = {
       id: user._id,
       role: user.role,
-    });
+    };
 
+    const token = generateToken(payload);
 
     res.status(200).json({
       message: "Login successful",
       token,
-
       user: {
         id: user._id,
         name: user.name,
         email: user.email,
         role: user.role,
+        isVoted: user.isVoted,
       },
     });
 
   } catch (error) {
-
-    console.error("Login error:", error);
+    console.log("Error login:", error);
 
     res.status(500).json({
-      message: "Login failed",
+      error: "An error occurred while login",
     });
   }
 });

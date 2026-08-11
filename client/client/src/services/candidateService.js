@@ -1,56 +1,81 @@
 import axiosInstance from "../api/axiosInstance";
 
+
+// ============================================
+// GET ALL CANDIDATES
+// ============================================
+
 export const getCandidates = async () => {
-  const response = await axiosInstance.get(
-    "/candidate"
-  );
 
-  return response.data;
+    const response =
+        await axiosInstance.get(
+            "/candidate"
+        );
+
+    return response.data;
 };
 
-export const voteCandidate = async (candidateID) => {
-  const response = await axiosInstance.post(
-    `/candidate/vote/${candidateID}`
-  );
 
-  return response.data;
-};
+// ============================================
+// GET MY CANDIDATE PROFILE
+// ============================================
 
-export const getResults = async () => {
-  const response = await axiosInstance.get(
-    "/candidate/vote/count"
-  );
+export const getMyCandidateProfile =
+    async () => {
 
-  return response.data;
-};
+        const response =
+            await axiosInstance.get(
+                "/candidate/my-profile"
+            );
 
-export const createCandidate = async (data) => {
-  const response = await axiosInstance.post(
-    "/candidate",
-    data
-  );
+        return response.data;
+    };
 
-  return response.data;
-};
 
-export const updateCandidate = async (
-  candidateID,
-  data
-) => {
-  const response = await axiosInstance.put(
-    `/candidate/${candidateID}`,
-    data
-  );
+// ============================================
+// REGISTER AS CANDIDATE
+// ============================================
 
-  return response.data;
-};
+export const registerAsCandidate =
+    async (candidateData) => {
 
-export const deleteCandidate = async (
-  candidateID
-) => {
-  const response = await axiosInstance.delete(
-    `/candidate/${candidateID}`
-  );
+        const response =
+            await axiosInstance.post(
+                "/candidate/register",
+                candidateData
+            );
 
-  return response.data;
-};
+        return response.data;
+    };
+
+
+// ============================================
+// VOTE
+// ============================================
+
+export const voteCandidate =
+    async (candidateId) => {
+
+        const response =
+            await axiosInstance.post(
+                `/candidate/${candidateId}/vote`
+            );
+
+        return response.data;
+    };
+
+
+// ============================================
+// GET VOTE COUNT / RESULTS
+// ============================================
+
+export const getVoteCount =
+    async () => {
+
+        const response =
+            await axiosInstance.get(
+                "/candidate/vote/count"
+            );
+
+        return response.data;
+    };

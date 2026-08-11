@@ -1,20 +1,17 @@
-import { Navigate, Outlet } from "react-router-dom";
-import { useAuth } from "../store/AuthContext";
+import { Navigate } from "react-router-dom";
 
-function AdminRoute() {
-  const { user, loading } = useAuth();
+function AdminRoute({ children }) {
+  const token = localStorage.getItem("token");
 
-  if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <p className="text-lg font-semibold text-blue-600">
-          Loading...
-        </p>
-      </div>
-    );
+  let user = null;
+
+  try {
+    user = JSON.parse(localStorage.getItem("user"));
+  } catch {
+    user = null;
   }
 
-  if (!user) {
+  if (!token || !user) {
     return <Navigate to="/login" replace />;
   }
 
@@ -22,7 +19,7 @@ function AdminRoute() {
     return <Navigate to="/dashboard" replace />;
   }
 
-  return <Outlet />;
+  return children;
 }
 
 export default AdminRoute;
