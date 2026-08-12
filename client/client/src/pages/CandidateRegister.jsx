@@ -1,190 +1,142 @@
+// src/pages/CandidateRegister.jsx
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { registerAsCandidate } from "../services/candidateService";
+import {
+  registerAsCandidate,
+  getMyCandidateProfile,
+} from "../services/candidateService";
+
 import { useAuth } from "../store/AuthContext";
 
-
 function CandidateRegister() {
+  const navigate = useNavigate();
 
-    const navigate = useNavigate();
+  const {
+    user,
+    updateUser,
+  } = useAuth();
 
-    const {
-        user,
-        updateUser,
-    } = useAuth();
+  const [party, setParty] = useState("");
+  const [loading, setLoading] = useState(false);
 
-    const [party, setParty] =
-        useState("");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    const [loading, setLoading] =
-        useState(false);
+    if (!party.trim()) {
+      alert("Please enter party name.");
+      return;
+    }
 
+    try {
+      setLoading(true);
 
-    const handleSubmit = async (e) => {
+      await registerAsCandidate({
+        party: party.trim(),
+      });
 
-        e.preventDefault();
+      const profileResponse =
+        await getMyCandidateProfile();
 
-        if (!party.trim()) {
-            alert("Please enter party name.");
-            return;
-        }
+      const updatedUser = {
+        ...user,
+        role: "candidate",
+      };
 
-        try {
+      updateUser(updatedUser);
 
-            setLoading(true);
+      localStorage.setItem(
+        "user",
+        JSON.stringify(updatedUser)
+      );
 
-            const response =
-                await registerAsCandidate({
-                    party: party.trim(),
-                });
+      alert(
+        "You are now registered as a candidate!"
+      );
 
+      navigate("/candidate-dashboard", {
+        replace: true,
+      });
 
-            /*
-             * Backend has changed the user's role
-             * from voter -> candidate.
-             *
-             * Fetch the latest profile.
-             */
+    } catch (error) {
+      console.error(
+        "Candidate registration error:",
+        error
+      );
 
-            const profileResponse =
-                await fetchUserProfile();
+      alert(
+        error.response?.data?.message ||
+          error.response?.data?.error ||
+          "Candidate registration failed"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  if (user?.role !== "voter") {
+    return null;
+  }
 
-            updateUser(
-                profileResponse
-            );
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12">
 
+      <div className="w-full max-w-md rounded-3xl bg-white p-8 shadow-xl">
 
-            localStorage.setItem(
-                "user",
-                JSON.stringify(
-                    profileResponse
-                )
-            );
+        <h1 className="text-3xl font-bold text-gray-900">
+          Become a Candidate
+        </h1>
 
+        <p className="mt-2 text-gray-500">
+          Register yourself as a candidate for the election.
+        </p>
 
-            alert(
-                "You are now registered as a candidate!"
-            );
+        <div className="mt-6 rounded-xl bg-blue-50 p-4">
+          <p className="text-sm text-gray-500">
+            Candidate Name
+          </p>
 
-
-            navigate(
-                "/candidate-dashboard"
-            );
-
-
-        } catch (error) {
-
-            console.error(
-                "Candidate registration error:",
-                error
-            );
-
-            alert(
-                error.response?.data?.message ||
-                error.response?.data?.error ||
-                "Candidate registration failed"
-            );
-
-        } finally {
-
-            setLoading(false);
-        }
-    };
-
-
-    return (
-
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-
-            <div className="w-full max-w-md rounded-3xl bg-white p-8 shadow-xl">
-
-                <h1 className="text-3xl font-bold text-gray-900">
-                    Become a Candidate
-                </h1>
-
-                <p className="mt-2 text-gray-500">
-                    Register yourself as a candidate.
-                </p>
-
-
-                <div className="mt-5 rounded-xl bg-blue-50 p-4 text-sm text-blue-700">
-                    <strong>
-                        Name:
-                    </strong>{" "}
-                    {user?.name}
-                </div>
-
-
-                <form
-                    onSubmit={handleSubmit}
-                    className="mt-8 space-y-5"
-                >
-
-                    <div>
-
-                        <label className="mb-2 block font-medium">
-                            Party Name
-                        </label>
-
-                        <input
-                            type="text"
-                            value={party}
-                            onChange={(e) =>
-                                setParty(
-                                    e.target.value
-                                )
-                            }
-                            placeholder="Enter party name"
-                            required
-                            className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-blue-500"
-                        />
-
-                    </div>
-
-
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="w-full rounded-xl bg-blue-600 py-3 font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
-                    >
-
-                        {loading
-                            ? "Registering..."
-                            : "Register as Candidate"}
-
-                    </button>
-
-                </form>
-
-            </div>
-
+          <p className="mt-1 font-semibold text-gray-900">
+            {user?.name}
+          </p>
         </div>
-    );
+
+        <form
+          onSubmit={handleSubmit}
+          className="mt-8 space-y-5"
+        >
+          <div>
+            <label className="mb-2 block font-medium">
+              Party Name
+            </label>
+
+            <input
+              type="text"
+              value={party}
+              onChange={(e) =>
+                setParty(e.target.value)
+              }
+              placeholder="Enter party name"
+              required
+              className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-blue-500"
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full rounded-xl bg-blue-600 py-3 font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {loading
+              ? "Registering..."
+              : "Register as Candidate"}
+          </button>
+        </form>
+
+      </div>
+    </div>
+  );
 }
-
-
-// ============================================
-// GET CURRENT USER
-// ============================================
-
-async function fetchUserProfile() {
-
-    const axiosInstance =
-        (
-            await import(
-                "../api/axiosInstance"
-            )
-        ).default;
-
-    const response =
-        await axiosInstance.get(
-            "/user/profile"
-        );
-
-    return response.data.user;
-}
-
 
 export default CandidateRegister;

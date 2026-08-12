@@ -1,3 +1,5 @@
+// src/App.jsx
+
 import { Routes, Route } from "react-router-dom";
 
 import Home from "./pages/Home";
@@ -17,7 +19,6 @@ function App() {
   return (
     <Routes>
 
-      {/* PUBLIC */}
       <Route
         path="/"
         element={<Home />}
@@ -38,47 +39,50 @@ function App() {
         element={<Results />}
       />
 
-      {/* VOTER DASHBOARD */}
       <Route
         path="/dashboard"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute
+            allowedRoles={["voter"]}
+          >
             <Dashboard />
           </ProtectedRoute>
         }
       />
 
-      {/* VOTING */}
       <Route
         path="/vote"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute
+            allowedRoles={["voter"]}
+          >
             <Vote />
           </ProtectedRoute>
         }
       />
 
-      {/* CANDIDATE DASHBOARD */}
-      <Route
-        path="/candidate-dashboard"
-        element={
-          <ProtectedRoute>
-            <CandidateDashboard />
-          </ProtectedRoute>
-        }
-      />
-
-      {/* VOTER → CANDIDATE REGISTRATION */}
       <Route
         path="/candidate/register"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute
+            allowedRoles={["voter"]}
+          >
             <CandidateRegister />
           </ProtectedRoute>
         }
       />
 
-      {/* ADMIN DASHBOARD */}
+      <Route
+        path="/candidate-dashboard"
+        element={
+          <ProtectedRoute
+            allowedRoles={["candidate"]}
+          >
+            <CandidateDashboard />
+          </ProtectedRoute>
+        }
+      />
+
       <Route
         path="/admin-dashboard"
         element={

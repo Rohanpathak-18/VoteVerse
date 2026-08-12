@@ -1,119 +1,90 @@
+// src/store/AuthContext.jsx
+
 import {
-    createContext,
-    useContext,
-    useEffect,
-    useState,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
 } from "react";
 
-import axiosInstance from "../api/axiosInstance";
+const AuthContext = createContext(null);
 
+export function AuthProvider({
+  children,
+}) {
+  const [user, setUser] =
+    useState(null);
 
-const AuthContext =
-    createContext();
+  const [loading, setLoading] =
+    useState(true);
 
+  useEffect(() => {
+    const token =
+      localStorage.getItem("token");
 
-export const AuthProvider =
-    ({ children }) => {
+    const storedUser =
+      localStorage.getItem("user");
 
-        const [user, setUser] =
-            useState(null);
+    if (token && storedUser) {
+      try {
+        const parsedUser =
+          JSON.parse(storedUser);
 
-        const [loading, setLoading] =
-            useState(true);
-
-
-        useEffect(() => {
-
-            const token =
-                localStorage.getItem(
-                    "token"
-                );
-
-            const storedUser =
-                localStorage.getItem(
-                    "user"
-                );
-
-
-            if (
-                token &&
-                storedUser
-            ) {
-
-                try {
-
-                    setUser(
-                        JSON.parse(
-                            storedUser
-                        )
-                    );
-
-                } catch (error) {
-
-                    console.error(
-                        "Invalid stored user"
-                    );
-
-                    localStorage.removeItem(
-                        "user"
-                    );
-                }
-
-            }
-
-            setLoading(false);
-
-        }, []);
-
-
-        const updateUser =
-            (updatedUser) => {
-
-                setUser(
-                    updatedUser
-                );
-
-                localStorage.setItem(
-                    "user",
-                    JSON.stringify(
-                        updatedUser
-                    )
-                );
-            };
-
-
-        const logout = () => {
-
-            localStorage.removeItem(
-                "token"
-            );
-
-            localStorage.removeItem(
-                "user"
-            );
-
-            setUser(null);
-        };
-
-
-        return (
-
-            <AuthContext.Provider
-                value={{
-                    user,
-                    setUser,
-                    updateUser,
-                    logout,
-                    loading,
-                }}
-            >
-
-                {children}
-
-            </AuthContext.Provider>
+        setUser(parsedUser);
+      } catch (error) {
+        console.error(
+          "Invalid stored user:",
+          error
         );
-    };
 
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
+      }
+    }
 
-export const useAuth = () =>
+    setLoading(false);
+  }, []);
+
+  const updateUser = (updatedUser) => {
+    setUser(updatedUser);
+
+    localStorage.setItem(
+      "user",
+      JSON.stringify(updatedUser)
+    );
+  };
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    setUser(null);
+  };
+
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        setUser,
+        updateUser,
+        logout,
+        loading,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export function useAuth() {
+  const context =
     useContext(AuthContext);
+
+  if (!context) {
+    throw new Error(
+      "useAuth must be used inside AuthProvider"
+    );
+  }
+
+  return context;
+}
