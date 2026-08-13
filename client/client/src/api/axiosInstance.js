@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "https://voteverse-vfkp.onrender.com/api",
+  baseURL: "https://voteverse-lft7.onrender.com",
   withCredentials: true,
 });
 
