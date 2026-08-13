@@ -34,10 +34,7 @@ export const getMyCandidateProfile =
 export const registerAsCandidate =
   async (candidateData) => {
     const response =
-      await axiosInstance.post(
-        "/candidate/register",
-        candidateData
-      );
+      await axiosInstance.post("/user/signup", data); 
 
     return response.data;
   };
