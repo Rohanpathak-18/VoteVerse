@@ -63,15 +63,7 @@ function Footer() {
               support@voteverse.com
             </p>
 
-            <div className="mt-5 flex gap-3">
-              <button className="rounded-full bg-slate-800 px-4 py-2 transition hover:bg-blue-600">
-                GitHub
-              </button>
-
-              <button className="rounded-full bg-slate-800 px-4 py-2 transition hover:bg-blue-600">
-                LinkedIn
-              </button>
-            </div>
+           
           </div>
 
         </div>
