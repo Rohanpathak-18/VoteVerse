@@ -13,8 +13,10 @@ const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
-    "https://voteverse-frontend.onrender.com",
+    origin: [
+      "http://localhost:5173",
+      "https://voteverse-frontend.onrender.com",
+    ],
     credentials: true,
   })
 );

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "https://voteverse-xqr6.onrender.com",
+  baseURL: "https://voteverse-vfkp.onrender.com/api",
   withCredentials: true,
 });
 
@@ -15,9 +15,7 @@ axiosInstance.interceptors.request.use(
 
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 export default axiosInstance;

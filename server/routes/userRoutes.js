@@ -9,9 +9,7 @@ const {
   generateToken,
 } = require("../jwt");
 
-// =====================================================
-// SIGNUP
-// =====================================================
+
 
 router.post("/signup", async (req, res) => {
   try {
@@ -27,10 +25,7 @@ router.post("/signup", async (req, res) => {
       party,
     } = req.body;
 
-    // -----------------------------
-    // Basic validation
-    // -----------------------------
-
+    
     if (
       !name ||
       !age ||
@@ -57,16 +52,13 @@ router.post("/signup", async (req, res) => {
       });
     }
 
-    // -----------------------------
-    // Only voter/candidate allowed
-    // -----------------------------
 
     const selectedRole =
       role === "candidate"
         ? "candidate"
         : "voter";
 
-    // Candidate must provide party
+
     if (
       selectedRole === "candidate" &&
       (!party || !party.trim())
@@ -77,9 +69,7 @@ router.post("/signup", async (req, res) => {
       });
     }
 
-    // -----------------------------
-    // Check duplicate user
-    // -----------------------------
+
 
     const existingUser = await User.findOne({
       $or: [
@@ -96,9 +86,6 @@ router.post("/signup", async (req, res) => {
       });
     }
 
-    // -----------------------------
-    // Create user
-    // -----------------------------
 
     const newUser = new User({
       name,
@@ -113,10 +100,6 @@ router.post("/signup", async (req, res) => {
 
     const savedUser = await newUser.save();
 
-    // -----------------------------
-    // If candidate, create candidate
-    // profile automatically
-    // -----------------------------
 
     if (selectedRole === "candidate") {
       const candidate = new Candidate({
@@ -130,18 +113,14 @@ router.post("/signup", async (req, res) => {
       await candidate.save();
     }
 
-    // -----------------------------
-    // Generate token
-    // -----------------------------
+
 
     const token = generateToken({
       id: savedUser._id,
       role: savedUser.role,
     });
 
-    // -----------------------------
-    // Response
-    // -----------------------------
+   
 
     res.status(201).json({
       message: "Account created successfully",
@@ -166,9 +145,7 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-// =====================================================
-// LOGIN
-// =====================================================
+
 
 router.post("/login", async (req, res) => {
   try {
