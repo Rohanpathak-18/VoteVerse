@@ -71,7 +71,8 @@ function Footer() {
         {/* Copyright */}
         <div className="mt-10 border-t border-slate-700 pt-6 text-center">
           <p className="text-slate-400">
-            © {new Date().getFullYear()} VoteVerse. All Rights Reserved.
+            © {new Date().getFullYear()} VoteVerse. All Rights Reserved.Made with ❤️ by Rohan Pathak
+
           </p>
         </div>
 
