@@ -83,6 +83,17 @@ function Navbar() {
               Results
             </Link>
 
+            {/* Class Elections */}
+            {user && (
+              <Link
+                to="/private-elections"
+                className="rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition-all hover:bg-blue-50 hover:text-blue-600"
+              >
+                Class Elections
+              </Link>
+            )}
+
+            {/* Voter Navigation */}
             {user?.role === "voter" && (
               <>
                 <Link
@@ -108,6 +119,7 @@ function Navbar() {
               </>
             )}
 
+            {/* Candidate Navigation */}
             {user?.role === "candidate" && (
               <Link
                 to="/candidate-dashboard"
@@ -117,6 +129,7 @@ function Navbar() {
               </Link>
             )}
 
+            {/* Admin Navigation */}
             {user?.role === "admin" && (
               <Link
                 to="/admin-dashboard"
@@ -126,6 +139,7 @@ function Navbar() {
               </Link>
             )}
 
+            {/* Logged Out */}
             {!user && (
               <>
                 <Link
@@ -144,11 +158,11 @@ function Navbar() {
               </>
             )}
 
+            {/* Logged In User */}
             {user && (
               <>
                 {/* User Info */}
                 <div className="ml-2 flex items-center gap-3 border-l border-gray-200 pl-3">
-
                   <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 font-bold text-white shadow-sm">
                     {user?.name?.charAt(0)?.toUpperCase() || "U"}
                   </div>
@@ -166,6 +180,7 @@ function Navbar() {
 
                 {/* Logout */}
                 <button
+                  type="button"
                   onClick={handleLogout}
                   className="ml-2 rounded-xl border border-red-200 bg-red-50 px-4 py-2.5 text-sm font-semibold text-red-600 transition-all hover:bg-red-500 hover:text-white hover:shadow-md"
                 >
@@ -178,9 +193,10 @@ function Navbar() {
           {/* Mobile Hamburger */}
           <button
             type="button"
-            onClick={() => setMenuOpen(!menuOpen)}
+            onClick={() => setMenuOpen((prev) => !prev)}
             className="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-700 shadow-sm md:hidden"
             aria-label="Toggle navigation menu"
+            aria-expanded={menuOpen}
           >
             {menuOpen ? (
               <svg
@@ -219,7 +235,6 @@ function Navbar() {
         {/* Mobile Menu */}
         {menuOpen && (
           <div className="border-t border-gray-100 py-4 md:hidden">
-
             <div className="flex flex-col gap-1">
 
               <Link
@@ -238,6 +253,18 @@ function Navbar() {
                 Results
               </Link>
 
+              {/* Class Elections - Mobile */}
+              {user && (
+                <Link
+                  to="/private-elections"
+                  onClick={closeMenu}
+                  className="rounded-lg px-4 py-3 font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+                >
+                  Class Elections
+                </Link>
+              )}
+
+              {/* Voter Navigation */}
               {user?.role === "voter" && (
                 <>
                   <Link
@@ -266,6 +293,7 @@ function Navbar() {
                 </>
               )}
 
+              {/* Candidate Navigation */}
               {user?.role === "candidate" && (
                 <Link
                   to="/candidate-dashboard"
@@ -276,6 +304,7 @@ function Navbar() {
                 </Link>
               )}
 
+              {/* Admin Navigation */}
               {user?.role === "admin" && (
                 <Link
                   to="/admin-dashboard"
@@ -286,6 +315,7 @@ function Navbar() {
                 </Link>
               )}
 
+              {/* Logged Out */}
               {!user && (
                 <>
                   <Link
@@ -306,11 +336,11 @@ function Navbar() {
                 </>
               )}
 
+              {/* Logged In User */}
               {user && (
                 <>
                   {/* Mobile User Info */}
                   <div className="mt-2 flex items-center gap-3 border-t border-gray-100 px-4 pt-4">
-
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 font-bold text-white">
                       {user?.name?.charAt(0)?.toUpperCase() || "U"}
                     </div>
@@ -327,6 +357,7 @@ function Navbar() {
                   </div>
 
                   <button
+                    type="button"
                     onClick={handleLogout}
                     className="mt-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 font-semibold text-red-600 hover:bg-red-500 hover:text-white"
                   >

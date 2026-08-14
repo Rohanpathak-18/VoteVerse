@@ -6,6 +6,7 @@ const connectDB = require("./db");
 
 const userRoutes = require("./routes/userRoutes");
 const candidateRoutes = require("./routes/candidateRoutes");
+const electionRoutes = require("./routes/electionRoutes");
 
 dotenv.config();
 
@@ -14,9 +15,9 @@ const app = express();
 app.use(
   cors({
     origin: [
-  "http://localhost:5173",
-  "https://voteverse-frontend.onrender.com",
-],
+      "http://localhost:5173",
+      "https://voteverse-frontend.onrender.com",
+    ],
     credentials: true,
   })
 );
@@ -25,14 +26,24 @@ app.use(express.json());
 
 connectDB();
 
-// Routes
+
+// =====================================================
+// ROUTES
+// =====================================================
+
 app.use("/api/user", userRoutes);
 app.use("/api/candidate", candidateRoutes);
+app.use("/api/elections", electionRoutes);
 
-// Test
+
+// =====================================================
+// TEST
+// =====================================================
+
 app.get("/", (req, res) => {
   res.send("VoteVerse API is running");
 });
+
 
 const PORT = process.env.PORT || 5000;
 
