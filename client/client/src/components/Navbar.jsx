@@ -83,15 +83,7 @@ function Navbar() {
               Results
             </Link>
 
-            {/* Class Elections */}
-            {user && (
-              <Link
-                to="/private-elections"
-                className="rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition-all hover:bg-blue-50 hover:text-blue-600"
-              >
-                Class Elections
-              </Link>
-            )}
+           
 
             {/* Voter Navigation */}
             {user?.role === "voter" && (
@@ -253,16 +245,7 @@ function Navbar() {
                 Results
               </Link>
 
-              {/* Class Elections - Mobile */}
-              {user && (
-                <Link
-                  to="/private-elections"
-                  onClick={closeMenu}
-                  className="rounded-lg px-4 py-3 font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600"
-                >
-                  Class Elections
-                </Link>
-              )}
+             
 
               {/* Voter Navigation */}
               {user?.role === "voter" && (
