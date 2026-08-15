@@ -10,7 +10,7 @@ The platform supports **user authentication, role-based authorization, candidate
 
 ## 🌐 Live Demo
 
-🚀 **Live Website:** `Add your deployed frontend URL here`
+🚀 **Live Website:** `https://voteverse-frontend.onrender.com/`
 
 📦 **GitHub Repository:** `https://github.com/Rohanpathak-18/VoteVerse`
 
